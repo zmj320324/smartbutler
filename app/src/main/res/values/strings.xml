@@ -5,4 +5,8 @@
     <string name="fragment_wechat">聊天中心</string>
     <string name="fragment_news">社区中心</string>
     <string name="setting">设置</string>
+    <string name="guide">引导页</string>
+    <string name="pager_item_one">伯</string>
+    <string name="pager_item_two">仲</string>
+    <string name="pager_item_three">叔</string>
 </resources>
