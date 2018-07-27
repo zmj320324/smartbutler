@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.tencent.bugly.crashreport.CrashReport;
 import com.zhangmengjun.smartbutler.fragment.GirlFragment;
 import com.zhangmengjun.smartbutler.fragment.NewsFragment;
 import com.zhangmengjun.smartbutler.fragment.UserFragment;
@@ -39,10 +40,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initData();
         initView();
 
-        L.i("text");
-        L.d("text");
-        L.e("text");
-        L.w("text");
+//        模拟崩溃
+//        CrashReport.testJavaCrash();
     }
 
     private void initData() {

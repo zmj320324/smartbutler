@@ -1,7 +1,6 @@
 package com.zhangmengjun.smartbutler.ui;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -9,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.zhangmengjun.smartbutler.MainActivity;
 import com.zhangmengjun.smartbutler.R;
 import com.zhangmengjun.smartbutler.utils.ShareUtils;
 import com.zhangmengjun.smartbutler.utils.StaticClass;
@@ -36,7 +34,7 @@ public class SplashActivity extends AppCompatActivity {
                     if(isFirst()){
                         startActivity(new Intent(SplashActivity.this,GuideActivity.class));
                     }else{
-                        startActivity(new Intent(SplashActivity.this,GuideActivity.class));
+                        startActivity(new Intent(SplashActivity.this,LoginActivity.class));
                     }
                     finish();
                     break;

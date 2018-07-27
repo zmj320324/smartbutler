@@ -13,4 +13,8 @@ public class StaticClass {
     public static final int HANDLER_SPLASH=1001;
     //判断程序是否是第一次运行
     public static final String SHARE_IS_FIRST = "ISFirst";
+    //bugly key
+    public static final String BUGLY_APP_ID="cc2cf509b7";
+    //bmob key
+    public static final String BMOB_APP_ID="8ad93a81dc399f8f90ee4bfc5d0fb377";
 }
