@@ -34,4 +34,5 @@ dependencies {
     implementation 'com.tencent.bugly:crashreport:2.6.6.1'
     //bmob
     implementation 'cn.bmob.android:bmob-sdk:3.6.3'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }

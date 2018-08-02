@@ -16,5 +16,17 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <!-- 自定义Dialog主题 -->
+    <style name="pop_anim_style">
+  <!--      <item name="android:windowEnterAnimation">@anim/pop_in</item>
+        <item name="android:windowExitAnimation">@anim/pop_out</item> -->
+    </style>
+    
+    <!-- dialog不需要title的主题 -->
+    <style name="Theme_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@android:color/holo_orange_dark</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 
 </resources>

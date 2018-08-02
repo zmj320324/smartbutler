@@ -103,7 +103,7 @@ public class Registered_activity extends BaseActivity implements View.OnClickLis
                         myUser.setSex(isGender);
                         myUser.setEmail(email);
                         myUser.setPassword(password);
-                        //邮箱验证已经收费
+                        //邮箱验证已经收费,默认注册用户已经通过验证
                         myUser.setEmailVerified(true);
                         myUser.signUp(new SaveListener<MyUser>() {
                             @Override

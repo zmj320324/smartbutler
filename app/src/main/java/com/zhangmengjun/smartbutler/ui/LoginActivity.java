@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -17,6 +18,7 @@ import com.zhangmengjun.smartbutler.R;
 import com.zhangmengjun.smartbutler.utils.L;
 import com.zhangmengjun.smartbutler.entity.MyUser;
 import com.zhangmengjun.smartbutler.utils.ShareUtils;
+import com.zhangmengjun.smartbutler.view.CustomDialog;
 
 
 import cn.bmob.v3.exception.BmobException;
@@ -41,6 +43,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     //忘记密码
     private TextView tv_forget;
 
+    private CustomDialog customDialog;
+
 
 
     @Override
@@ -64,6 +68,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         tv_forget = findViewById(R.id.tv_forget);
         tv_forget.setOnClickListener(this);
 
+//        customDialog = new CustomDialog(this,100,100,R.layout.dialog_lodding,R.style.Theme_dialog, Gravity.CENTER,R.style.pop_anim_style);
+        customDialog = new CustomDialog(this,R.layout.dialog_lodding,R.style.Theme_dialog);
+        //屏幕外点击无效
+        customDialog.setCancelable(false);
+
         //设置选中的状态
         Boolean isCheck = ShareUtils.getBoolean(this,"keep_password",false);
         keep_password.setChecked(isCheck);
@@ -80,17 +89,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_forget:
-                startActivity(new Intent(this,ForgetPassword_activity.class));
+                startActivity(new Intent(this,ForgetPassword_activity.class
+                ));
                 break;
             case R.id.btn_registered:
                 startActivity(new Intent(this, Registered_activity.class));
                 break;
             case R.id.btn_login:
-                //获取输入框的值
+                //1.获取输入框的值
                 String name = user_name.getText().toString().trim();
                 String password = user_password.getText().toString().trim();
-                //判断用户名和密码是否为空
+                //2.判断用户名和密码是否为空
                 if (!TextUtils.isEmpty(name) & !TextUtils.isEmpty(password)) {
+                    customDialog.show();
                     //登陆
                     MyUser myUser = new MyUser();
                     myUser.setUsername(name);
@@ -98,6 +109,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     myUser.login(new SaveListener<MyUser>() {
                         @Override
                         public void done(MyUser myUser, BmobException e) {
+                            customDialog.dismiss();
                             if (e == null) {
                                 //判断邮箱是否登陆
                                 if(myUser.getEmailVerified()){
