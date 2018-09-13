@@ -1,11 +1,11 @@
 package com.zhangmengjun.smartbutler.fragment;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -16,7 +16,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,15 +27,15 @@ import android.widget.Toast;
 
 import com.zhangmengjun.smartbutler.R;
 import com.zhangmengjun.smartbutler.entity.MyUser;
+import com.zhangmengjun.smartbutler.ui.CourierActivity;
 import com.zhangmengjun.smartbutler.ui.LoginActivity;
+import com.zhangmengjun.smartbutler.ui.PhoneActivity;
 import com.zhangmengjun.smartbutler.utils.L;
-import com.zhangmengjun.smartbutler.utils.ShareUtils;
 import com.zhangmengjun.smartbutler.utils.UtilTools;
 import com.zhangmengjun.smartbutler.view.CustomDialog;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
 import cn.bmob.v3.listener.UpdateListener;
@@ -72,7 +71,19 @@ public class UserFragment extends Fragment implements View.OnClickListener {
     private Button btn_camera;
     private Button btn_picture;
     private Button btn_cancel;
-    private static final int WRITE_SDCARD_PERMISSION_REQUEST_CODE = 1;
+
+    //设置头像相关
+    public static final String PHOTO_IMAGE_FILE_NAME = "fileImg.jpg";
+    public static final int CAMERA_REQUEST_CODE = 100;
+    public static final int PICTURE_REQUEST_CODE = 101;
+    public static final int RESULT_REQUEST_CODE = 102;
+    private File tempFile = null;
+    private Uri photoOutputUri = null; // 图片最终的输出文件的 Uri
+
+    //查询快递
+    private TextView tv_courier;
+    //归属地查询
+    private TextView tv_phone;
 
 
     @Nullable
@@ -89,6 +100,11 @@ public class UserFragment extends Fragment implements View.OnClickListener {
         edit_user = view.findViewById(R.id.edit_user);
         edit_user.setOnClickListener(this);
 
+        tv_courier = view.findViewById(R.id.tv_courier);
+        tv_courier.setOnClickListener(this);
+        tv_phone = view.findViewById(R.id.tv_phone);
+        tv_phone.setOnClickListener(this);
+
         user_name = view.findViewById(R.id.user_name);
         user_gender = view.findViewById(R.id.user_gender);
         user_age = view.findViewById(R.id.user_age);
@@ -102,16 +118,15 @@ public class UserFragment extends Fragment implements View.OnClickListener {
         profile_image = view.findViewById(R.id.profile_image);
         profile_image.setOnClickListener(this);
         //设置默认头像
-        UtilTools.getImageFromShare(getActivity(),profile_image);
-
+        UtilTools.getImageFromShare(getActivity(), profile_image);
 
 
         //初始化dialog
-        customDialog = new CustomDialog(getActivity(),-2,-2,R.layout.dialog_photo,R.style.pop_anim_style, Gravity.BOTTOM);
+        customDialog = new CustomDialog(getActivity(), -2, -2, R.layout.dialog_photo, R.style.pop_anim_style, Gravity.BOTTOM);
         //提示框外点击无效
         customDialog.setCancelable(false);
 
-        btn_camera =customDialog.findViewById(R.id.btn_camera);
+        btn_camera = customDialog.findViewById(R.id.btn_camera);
         btn_camera.setOnClickListener(this);
         btn_picture = customDialog.findViewById(R.id.btn_picture);
         btn_picture.setOnClickListener(this);
@@ -127,13 +142,16 @@ public class UserFragment extends Fragment implements View.OnClickListener {
         user_desc.setText(myUser.getDesc());
 
 
-        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            // 申请读写内存卡内容的权限
-            ActivityCompat.requestPermissions(getActivity(),
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_SDCARD_PERMISSION_REQUEST_CODE);
-        }
+    }
 
+    // 申请权限
+    private void getpermission(Activity activity, String permission) {
+        if (ContextCompat.checkSelfPermission(activity,permission)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity, new String[]{permission}, 1);
+        }else{
+            Toast.makeText(activity,"用户已经赋予权限"+permission,Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setEditable(Boolean editable) {
@@ -185,14 +203,14 @@ public class UserFragment extends Fragment implements View.OnClickListener {
                     myUser.update(bmobUser.getObjectId(), new UpdateListener() {
                         @Override
                         public void done(BmobException e) {
-                            if(e == null){
+                            if (e == null) {
                                 //修改成功
                                 setEditable(false);
                                 btn_update_ok.setVisibility(View.GONE);
-                                Toast.makeText(getActivity(),"修改成功!!!",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "修改成功!!!", Toast.LENGTH_SHORT).show();
 
-                            }else{
-                                Toast.makeText(getActivity(),"修改失败!!!",Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(getActivity(), "修改失败!!!", Toast.LENGTH_SHORT).show();
 
                             }
                         }
@@ -209,28 +227,29 @@ public class UserFragment extends Fragment implements View.OnClickListener {
                 customDialog.dismiss();
                 break;
             case R.id.btn_camera:
+                getpermission(getActivity(),Manifest.permission.CAMERA);
                 toCamera();
                 break;
             case R.id.btn_picture:
+                getpermission(getActivity(),Manifest.permission.READ_EXTERNAL_STORAGE);
                 toPicture();
+                break;
+            case R.id.tv_courier:
+                startActivity(new Intent(getActivity(),CourierActivity.class));
+                break;
+            case R.id.tv_phone:
+                startActivity(new Intent(getActivity(),PhoneActivity.class));
                 break;
         }
 
     }
 
-    public static final String PHOTO_IMAGE_FILE_NAME="fileImg.jpg";
-    public static final int  CAMERA_REQUEST_CODE =100;
-    public static final int PICTURE_REQUEST_CODE =101;
-    public static final int RESULT_REQUEST_CODE=102;
-    private File tempFile = null;
-    private Uri photoOutputUri = null; // 图片最终的输出文件的 Uri
-
     //跳转相机
     private void toCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //判断内存卡是否可用，可用即进行存储
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(Environment.getExternalStorageDirectory(),PHOTO_IMAGE_FILE_NAME)));
-        startActivityForResult(intent,CAMERA_REQUEST_CODE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(Environment.getExternalStorageDirectory(), PHOTO_IMAGE_FILE_NAME)));
+        startActivityForResult(intent, CAMERA_REQUEST_CODE);
         customDialog.dismiss();
     }
 
@@ -238,26 +257,26 @@ public class UserFragment extends Fragment implements View.OnClickListener {
     private void toPicture() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        startActivityForResult(intent,PICTURE_REQUEST_CODE);
+        startActivityForResult(intent, PICTURE_REQUEST_CODE);
         customDialog.dismiss();
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode != getActivity().RESULT_CANCELED){
-            switch (requestCode){
+        if (requestCode != getActivity().RESULT_CANCELED) {
+            switch (requestCode) {
                 //相册返回的数据
                 case PICTURE_REQUEST_CODE:
                     startPhotoZoom(data.getData());
                     break;
                 //相机返回的数据
                 case CAMERA_REQUEST_CODE:
-                    tempFile = new File(Environment.getExternalStorageDirectory(),PHOTO_IMAGE_FILE_NAME);
+                    tempFile = new File(Environment.getExternalStorageDirectory(), PHOTO_IMAGE_FILE_NAME);
                     startPhotoZoom(Uri.fromFile(tempFile));
                     break;
                 case RESULT_REQUEST_CODE:
                     File file = new File(photoOutputUri.getPath());
-                    if(file.exists()) {
+                    if (file.exists()) {
                         Bitmap bitmap = BitmapFactory.decodeFile(photoOutputUri.getPath());
                         profile_image.setImageBitmap(bitmap);
                         file.delete(); // 选取完后删除照片
@@ -295,28 +314,31 @@ public class UserFragment extends Fragment implements View.OnClickListener {
     }
     */
 
+    //裁剪头像
     private void startPhotoZoom(Uri uri) {
-        if(uri == null){
+        getpermission(getActivity(),Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if (uri == null) {
             L.e("uri is  null");
-            return ;
+            return;
         }
 
         Intent intent = new Intent("com.android.camera.action.CROP");
-        intent.setDataAndType(uri,"image/*");
+        intent.setDataAndType(uri, "image/*");
         // 授权应用读取 Uri，这一步要有，不然裁剪程序会崩溃
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         //设置裁剪
-        intent.putExtra("crop","true");
+        intent.putExtra("crop", "true");
         //设置宽高比例
-        intent.putExtra("aspectX",1);
-        intent.putExtra("aspectY",1);
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
         //设置裁剪图片的质量
-        intent.putExtra("outputX",320);
-        intent.putExtra("outputY",320);
+        intent.putExtra("outputX", 320);
+        intent.putExtra("outputY", 320);
         //发送数据
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,photoOutputUri=Uri.parse("file:////sdcard/image_output.jpg"));
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoOutputUri = Uri.parse("file:////sdcard/image_output.jpg"));
 //        intent.putExtra("return-data",true);
-        startActivityForResult(intent,RESULT_REQUEST_CODE);
+        startActivityForResult(intent, RESULT_REQUEST_CODE);
 
     }
 
@@ -324,7 +346,7 @@ public class UserFragment extends Fragment implements View.OnClickListener {
     public void onDestroy() {
         super.onDestroy();
         //保存头像
-        putImageToShare(getActivity(),profile_image);
+        putImageToShare(getActivity(), profile_image);
 
     }
 }

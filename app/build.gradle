@@ -33,6 +33,23 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:3.3.1'
     implementation 'com.tencent.bugly:crashreport:2.6.6.1'
     //bmob
-    implementation 'cn.bmob.android:bmob-sdk:3.6.3'
+    implementation('cn.bmob.android:bmob-sdk:3.6.3') {
+        exclude group: 'io.reactivex'
+//        exclude group: 'com.squareup.okio'
+        exclude group: 'com.bmob.android', module: 'okio'
+    }
     implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation('com.kymjs.rxvolley:rxvolley:1.1.4') {
+        exclude group: 'io.reactivex'
+        exclude group:'com.squareup.okhttp3'
+        exclude group:'com.squareup.okio'
+    }
+    implementation('com.squareup.picasso:picasso:2.5.2') {
+//        exclude group: 'com.squareup.okio'
+//        exclude group: 'com.bmob.android',module:'okio' //2.71828
+    }
+    implementation 'com.github.chrisbanes.photoview:library:1.2.4'
+    implementation files('libs/Msc.jar')
+    implementation files('libs/Sunflower.jar')
+    implementation project(path: ':libzxing')
 }

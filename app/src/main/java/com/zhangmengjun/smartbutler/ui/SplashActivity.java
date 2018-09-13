@@ -64,7 +64,7 @@ public class SplashActivity extends AppCompatActivity {
     private boolean isFirst(){
         boolean isFirst= ShareUtils.getBoolean(this,StaticClass.SHARE_IS_FIRST,true);
         if(isFirst){
-            ShareUtils.pubBoolean(this,StaticClass.SHARE_IS_FIRST,false);
+            ShareUtils.putBoolean(this,StaticClass.SHARE_IS_FIRST,false);
             return true;
         }else{
             return false;

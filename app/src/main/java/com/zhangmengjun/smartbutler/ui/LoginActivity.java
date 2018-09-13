@@ -140,7 +140,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onDestroy();
 
         //保存状态
-        ShareUtils.pubBoolean(this,"keep_password",keep_password.isChecked());
+        ShareUtils.putBoolean(this,"keep_password",keep_password.isChecked());
         //是否记住密码
         if(keep_password.isChecked()){
             //记住用户名和密码

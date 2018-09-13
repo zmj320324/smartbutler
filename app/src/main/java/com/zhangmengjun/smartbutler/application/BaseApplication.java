@@ -2,6 +2,9 @@ package com.zhangmengjun.smartbutler.application;
 
 import android.app.Application;
 
+import com.baidu.mapapi.SDKInitializer;
+import com.iflytek.cloud.SpeechConstant;
+import com.iflytek.cloud.SpeechUtility;
 import com.tencent.bugly.crashreport.CrashReport;
 import com.zhangmengjun.smartbutler.utils.StaticClass;
 
@@ -23,5 +26,9 @@ public class BaseApplication extends Application {
         CrashReport.initCrashReport(getApplicationContext(), StaticClass.BUGLY_APP_ID, true);
         //初始化Bmob
         Bmob.initialize(this,StaticClass.BMOB_APP_ID);
+        // 初始化创建语音配置对象
+        SpeechUtility.createUtility(getApplicationContext(), SpeechConstant.APPID +"="+StaticClass.VOICE_KEY);
+        //在使用百度地图SDK各组件之前初始化context信息，传入ApplicationContext
+        SDKInitializer.initialize(getApplicationContext());
     }
 }

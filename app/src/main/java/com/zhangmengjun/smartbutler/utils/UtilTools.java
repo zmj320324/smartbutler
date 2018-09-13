@@ -1,6 +1,8 @@
 package com.zhangmengjun.smartbutler.utils;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
@@ -10,7 +12,6 @@ import android.util.Base64;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,7 +31,7 @@ public class UtilTools {
         textView.setTypeface(typeface);
     }
 
-    //保存图片到shareutils
+    //保存图片到ShareUtils
     public static void putImageToShare(Context context, ImageView imageView){
         BitmapDrawable bitmapDrawable= (BitmapDrawable) imageView.getDrawable();
         Bitmap bitmap = bitmapDrawable.getBitmap();
@@ -44,7 +45,7 @@ public class UtilTools {
         ShareUtils.putString(context,"image_title",imgString);
     }
 
-    //从shareutils获取图片
+    // 从ShareUtils获取图片
     public static void getImageFromShare(Context context,ImageView imageView){
         //1.拿到String
         String imgString = ShareUtils.getString(context,"image_title","");
@@ -57,4 +58,19 @@ public class UtilTools {
             imageView.setImageBitmap(bitmap);
         }
     }
+
+    //获取版本号
+    public static  String getVersion(Context context){
+        PackageManager pm = context.getPackageManager();
+        try {
+            PackageInfo info =pm.getPackageInfo(context.getPackageName(),0);
+            return info.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return "未知版本";
+        }
+    }
+
+
+
 }

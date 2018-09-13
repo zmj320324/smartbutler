@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">智能管家</string>
-    <string name="guide">引导页</string>
-    <string name="pager_item_one">ONE</string>
-    <string name="pager_item_two">TWO</string>
-    <string name="pager_item_three">THREE</string>
-    <string name="app_start">进入主页</string>
-</resources>

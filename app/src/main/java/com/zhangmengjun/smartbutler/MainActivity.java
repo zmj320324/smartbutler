@@ -12,13 +12,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.tencent.bugly.crashreport.CrashReport;
 import com.zhangmengjun.smartbutler.fragment.GirlFragment;
 import com.zhangmengjun.smartbutler.fragment.NewsFragment;
 import com.zhangmengjun.smartbutler.fragment.UserFragment;
-import com.zhangmengjun.smartbutler.fragment.WechatFragment;
+import com.zhangmengjun.smartbutler.fragment.ButlerFragment;
 import com.zhangmengjun.smartbutler.ui.SettingActivity;
-import com.zhangmengjun.smartbutler.utils.L;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,8 +50,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTitle.add("个人中心");
 
         mFragment = new ArrayList<>();
+        mFragment.add(new ButlerFragment());
         mFragment.add(new NewsFragment());
-        mFragment.add(new WechatFragment());
         mFragment.add(new GirlFragment());
         mFragment.add(new UserFragment());
 
