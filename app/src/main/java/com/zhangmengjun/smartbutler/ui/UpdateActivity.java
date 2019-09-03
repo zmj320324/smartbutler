@@ -26,7 +26,7 @@ import java.io.File;
  * 文件名：UpdateActivity
  * 创建者：WALLMUD
  * 创建时间：2018/9/5 17:40
- * 描述：TODO
+ * 描述：下载
  */
 public class UpdateActivity extends BaseActivity{
 
@@ -56,7 +56,7 @@ public class UpdateActivity extends BaseActivity{
                 case HANDLER_OK:
                     tv_size.setText("下载成功.");
                     //启动这个应用安装
-                    startIntallApk();
+//                    startIntallApk();
                     break;
                 case HANDLER_ON:
                     tv_size.setText("下载失败");
@@ -70,6 +70,7 @@ public class UpdateActivity extends BaseActivity{
         Intent i = new Intent();
         i.setAction(Intent.ACTION_VIEW);
         i.addCategory(Intent.CATEGORY_DEFAULT);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         i.setDataAndType(Uri.fromFile(new File(path)),"application/vnd.android.package-archive");
         startActivity(i);
         finish();
@@ -85,9 +86,10 @@ public class UpdateActivity extends BaseActivity{
 
     private void initView() {
         tv_size= findViewById(R.id.tv_size);
-        path = FileUtils.getSDCardPath()+"/"+System.currentTimeMillis()+".apk";
+        path = getExternalCacheDir()+"/"+System.currentTimeMillis()+".apk";
         //下载
         url =getIntent().getStringExtra("url");
+        L.e(path);
         if(!TextUtils.isEmpty(url)){
             //下载
             RxVolley.download(path, url, new ProgressListener() {

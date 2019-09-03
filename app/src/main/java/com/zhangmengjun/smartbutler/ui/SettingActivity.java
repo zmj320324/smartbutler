@@ -135,6 +135,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             case R.id.sw_speak:
                 //切换相反
                 sw_speak.setSelected(!sw_speak.isSelected());
+                //保存状态
                 ShareUtils.putBoolean(this, "isSpeak", sw_speak.isChecked());
                 break;
             case R.id.sw_sms:
@@ -211,10 +212,10 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                         startActivity(intent);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //什么也不做，也会执行dismiss方法
-            }
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //什么也不做，也会执行dismiss方法
+                    }
         }).show();
     }
 

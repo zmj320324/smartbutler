@@ -33,6 +33,7 @@ import com.zhangmengjun.smartbutler.view.DispatchLinearLayout;
  */
 public class SmsService extends Service implements View.OnClickListener {
 
+    //声明短信广播
     private SmsReceiver smsReceiver;
     //发件人号码
     private String smsPhone;
@@ -68,12 +69,12 @@ public class SmsService extends Service implements View.OnClickListener {
     private void init() {
         L.i("Build.VERSION.SDK_INT:"+ Build.VERSION.SDK_INT);
         L.i("init service");
-        //动态注册
+        //动态注册广播
         smsReceiver = new SmsReceiver();
         IntentFilter intentFilter = new IntentFilter();
         //添加action
         intentFilter.addAction(StaticClass.SMS_ACTION);
-        //设置权限
+        //设置权重
         intentFilter.setPriority(Integer.MAX_VALUE);
         //注册
         registerReceiver(smsReceiver,intentFilter);
@@ -165,6 +166,7 @@ public class SmsService extends Service implements View.OnClickListener {
 
     //窗口提示
     private void showWindow() {
+        //获取窗口服务
         windowManager = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
         //获取布局参数
         layoutParams = new WindowManager.LayoutParams();
